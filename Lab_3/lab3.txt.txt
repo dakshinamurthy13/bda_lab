@@ -1,0 +1,203 @@
+cqlsh> CREATE KEYSPACE Library WITH REPLICATION={'class':'SimpleStrategy','replication_factor':1};
+cqlsh> describe keyspaces;
+
+system_schema  system   system_distributed  system_traces
+system_auth    library  employee
+
+cqlsh> use library;
+cqlsh:library> CREATE TABLE Library_Info (student_id int, student_Name text,book_name text,book_id int,Date_of_issue timestamp,primary key(student_id));
+cqlsh:library> show tables;
+Improper show command.
+cqlsh:library> describe tables;
+
+library_info
+
+cqlsh:library> alter table Library_Info add counter_value counter;
+ConfigurationException: Cannot add a counter column (counter_value) in a non counter column family
+cqlsh:library> alter table Library_Info add counter_value int;
+cqlsh:library> BEGIN BATCH
+           ... INSERT INTO Library_Info(student_id, student_Name, book_name, book_id, Date_of_issue,counter_value) VALUES (120,'shreya','BDA',1000,'2021-04-01',0)
+           ... INSERT INTO Library_Info(student_id, student_Name, book_name, book_id, Date_of_issue,counter_value) VALUES (121,'dakshina','OOMD',1010,'2021-04-01',0)
+           ... INSERT INTO Library_Info(student_id, student_Name, book_name, book_id, Date_of_issue,counter_value) VALUES (122,'bharath','BDA',1000,'2021-04-01',0)
+           ... INSERT INTO Library_Info(student_id, student_Name, book_name, book_id, Date_of_issue,counter_value) VALUES (123,'kiran','ML',1020,'2021-04-01',0)
+           ... apply batch;
+cqlsh:library> select * from Library_Info;
+
+ student_id | book_id | book_name | counter_value | date_of_issue                   | student_name
+------------+---------+-----------+---------------+---------------------------------+--------------
+        120 |    1000 |       BDA |             0 | 2021-03-31 18:30:00.000000+0000 |       shreya
+        123 |    1020 |        ML |             0 | 2021-03-31 18:30:00.000000+0000 |        kiran
+        122 |    1000 |       BDA |             0 | 2021-03-31 18:30:00.000000+0000 |      bharath
+        121 |    1010 |      OOMD |             0 | 2021-03-31 18:30:00.000000+0000 |     dakshina
+
+(4 rows)
+cqlsh:library> update Library_Info set counter_value=counter_value+1 where student_id=123;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Invalid operation (counter_value = counter_value + 1) for non counter column counter_value"
+cqlsh:library> update Library_Info set counter_value=2 where student_id=123;
+cqlsh:library> update Library_Info set counter_value=1 where student_id=120;
+cqlsh:library> update Library_Info set counter_value=1 where student_id=121;
+cqlsh:library> update Library_Info set counter_value=2 where student_id=122;
+cqlsh:library> select student_id from Library_Info where book_name='BDA' and counter_value=2 allow filtering;
+
+ student_id
+------------
+        122
+
+(1 rows)
+cqlsh:library> copy Library_Info(student_id,student_Name,book_name,book_name,book_id,counter_value) to 'd:\lab2.csv';
+Using 7 child processes
+
+Starting copy of library.library_info with columns [student_id, student_name, book_name, book_name, book_id, counter_value].
+Processed: 4 rows; Rate:       4 rows/s; Avg. rate:       2 rows/s
+4 rows exported to 1 files in 2.646 seconds.
+cqlsh:library> copy Library_Info(student_id,student_Name,book_name,book_name,book_id,counter_value) to stdout;
+121,dakshina,OOMD,OOMD,1010,1
+120,shreya,BDA,BDA,1000,1
+122,bharath,BDA,BDA,1000,2
+123,kiran,ML,ML,1020,2
+cqlsh:library> copy Library_Info(student_id,student_Name,book_name,book_name,book_id,counter_value) from 'd:\lab2.csv';
+Using 7 child processes
+
+Starting copy of library.library_info with columns [student_id, student_name, book_name, book_name, book_id, counter_value].
+Process ImportProcess-15:
+PTrocess ImportProcess-16:
+raceback (most recent call last):
+T raceback (most recent call last):
+ File "C:\Python27\lib\multiprocessing\process.py", line 267, in _bootstrap
+  File "C:\Python27\lib\multiprocessing\process.py", line 267, in _bootstrap
+     self.run()
+   self.run()
+   File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2339, in run
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2339, in run
+     self.close()
+   self.close()
+   File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2343, in close
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2343, in close
+     self._session.cluster.shutdown()
+   self._session.cluster.shutdown()
+   File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 1259, in shutdown
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 1259, in shutdown
+PPP    self.control_connection.shutdown()
+rocess ImportProcess-18:
+rocess ImportProcess-19:
+rocess ImportProcess-17:
+TT   File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 2850, in shutdown
+raceback (most recent call last):
+raceback (most recent call last):
+T F    self.control_connection.shutdown()
+raceback (most recent call last):
+  ailed to import 0 rows: InvalidRequest - Error from server: code=2200 [Invalid query] message="The column names contains duplicates",  given up after 1 attempts
+   self._connection.close()
+  File "C:\Python27\lib\multiprocessing\process.py", line 267, in _bootstrap
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 2850, in shutdown
+ File "C:\Python27\lib\multiprocessing\process.py", line 267, in _bootstrap
+  File "C:\Python27\lib\multiprocessing\process.py", line 267, in _bootstrap
+   self._connection.close()
+   Failed to import 0 rows: InvalidRequest - Error from server: code=2200 [Invalid query] message="The column names contains duplicates",  given up after 1 attempts
+   self.run()
+F File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 373, in close
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 373, in close
+   ailed to import 0 rows: InvalidRequest - Error from server: code=2200 [Invalid query] message="The column names contains duplicates",  given up after 1 attempts
+    self.run()
+    self.run()
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2339, in run
+F   AsyncoreConnection.create_timer(0, partial(asyncore.dispatcher.close, self))
+    AsyncoreConnection.create_timer(0, partial(asyncore.dispatcher.close, self))
+ ailed to import 0 rows: InvalidRequest - Error from server: code=2200 [Invalid query] message="The column names contains duplicates",  given up after 1 attempts
+   File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2339, in run
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2339, in run
+F File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 335, in create_timer
+   self.close()
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 335, in create_timer
+ ailed to import 0 rows: InvalidRequest - Error from server: code=2200 [Invalid query] message="The column names contains duplicates",  given up after 1 attempts
+       self.close()
+   cls._loop.add_timer(timer)
+   self.close()
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2343, in close
+   cls._loop.add_timer(timer)
+ A  A File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2343, in close
+ttributeError: 'NoneType' object has no attribute 'add_timer'
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2343, in close
+   self._session.cluster.shutdown()
+ttributeError: 'NoneType' object has no attribute 'add_timer'
+      self._session.cluster.shutdown()
+   self._session.cluster.shutdown()
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 1259, in shutdown
+   File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 1259, in shutdown
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 1259, in shutdown
+    self.control_connection.shutdown()
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 2850, in shutdown
+    self._connection.close()
+   File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 373, in close
+   self.control_connection.shutdown()
+     AsyncoreConnection.create_timer(0, partial(asyncore.dispatcher.close, self))
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 2850, in shutdown
+    self.control_connection.shutdown()
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 335, in create_timer
+    self._connection.close()
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 2850, in shutdown
+    cls._loop.add_timer(timer)
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 373, in close
+ A   self._connection.close()
+ttributeError: 'NoneType' object has no attribute 'add_timer'
+     AsyncoreConnection.create_timer(0, partial(asyncore.dispatcher.close, self))
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 373, in close
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 335, in create_timer
+ P   cls._loop.add_timer(timer)
+ rocess ImportProcess-20:
+AT   AsyncoreConnection.create_timer(0, partial(asyncore.dispatcher.close, self))
+ttributeError: 'NoneType' object has no attribute 'add_timer'
+raceback (most recent call last):
+   File "C:\Python27\lib\multiprocessing\process.py", line 267, in _bootstrap
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 335, in create_timer
+     self.run()
+    cls._loop.add_timer(timer)
+ File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2339, in run
+AttributeError: 'NoneType' object has no attribute 'add_timer'
+    self.close()
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2343, in close
+    self._session.cluster.shutdown()
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 1259, in shutdown
+    self.control_connection.shutdown()
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 2850, in shutdown
+    self._connection.close()
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 373, in close
+    AsyncoreConnection.create_timer(0, partial(asyncore.dispatcher.close, self))
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 335, in create_timer
+ Process ImportProcess-21:
+   cls._loop.add_timer(timer)
+TAraceback (most recent call last):
+ttributeError: 'NoneType' object has no attribute 'add_timer'
+  File "C:\Python27\lib\multiprocessing\process.py", line 267, in _bootstrap
+    self.run()
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2339, in run
+    self.close()
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\pylib\cqlshlib\copyutil.py", line 2343, in close
+    self._session.cluster.shutdown()
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 1259, in shutdown
+    self.control_connection.shutdown()
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 2850, in shutdown
+    self._connection.close()
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 373, in close
+    AsyncoreConnection.create_timer(0, partial(asyncore.dispatcher.close, self))
+  File "C:\Program Files\apache-cassandra-3.11.12\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 335, in create_timer
+    cls._loop.add_timer(timer)
+AttributeError: 'NoneType' object has no attribute 'add_timer'
+Failed to import 0 rows: InvalidRequest - Error from server: code=2200 [Invalid query] message="The column names contains duplicates",  given up after 1 attempts
+Failed to import 0 rows: InvalidRequest - Error from server: code=2200 [Invalid query] message="The column names contains duplicates",  given up after 1 attempts
+7 child process(es) died unexpectedly, aborting
+Processed: 0 rows; Rate:       0 rows/s; Avg. rate:       0 rows/s
+0 rows imported from 1 files in 7.597 seconds (0 skipped).
+cqlsh:library> select * from Library_Info;
+
+ student_id | book_id | book_name | counter_value | date_of_issue                   | student_name
+------------+---------+-----------+---------------+---------------------------------+--------------
+        120 |    1000 |       BDA |             1 | 2021-03-31 18:30:00.000000+0000 |       shreya
+        123 |    1020 |        ML |             2 | 2021-03-31 18:30:00.000000+0000 |        kiran
+        122 |    1000 |       BDA |             2 | 2021-03-31 18:30:00.000000+0000 |      bharath
+        121 |    1010 |      OOMD |             1 | 2021-03-31 18:30:00.000000+0000 |     dakshina
+
+(4 rows)
+cqlsh:library> truncate Library_Info;
+cqlsh:library> copy Library_Info(student_id,student_Name,book_name,book_name,book_id,counter_value) from 'd:\lab2.csv';
+Using 7 child processes
