@@ -1,0 +1,88 @@
+bmsce@bmsce-Precision-T1700:~$ cqlsh'
+> ^C
+bmsce@bmsce-Precision-T1700:~$ cqlsh
+Connected to Test Cluster at 127.0.0.1:9042.
+[cqlsh 5.0.1 | Cassandra 3.11.4 | CQL spec 3.4.4 | Native protocol v4]
+Use HELP for help.
+cqlsh> show keyspace;
+Improper show command.
+cqlsh> show keyspaces;
+Improper show command.
+cqlsh> describe keyspaces;
+
+library1     students       library    employee_2  system_traces     
+system_auth  system_schema  project    library_3   system_distributed
+employee_1   employee2      library_4  library_2   employee1         
+student      system         library_1  employee    employee_3        
+
+cqlsh> create keyspace Dak with replication={'class':'SimpleStrategy','replication_factor':3};
+cqlsh> use Dak;
+cqlsh:dak> CREATE TABLE Library_Info (student_id int, student_Name text,book_name text,book_id int,Date_of_issue timestamp,primary key(student_id,student_Name,book_name,book_id,Date_of_issue));
+cqlsh:dak> alter table Library_Info add counter_value counter;
+ConfigurationException: Cannot add a counter column (counter_value) in a non counter column family
+cqlsh:dak> update Library_Info1 set count=count+1 where student_id=2 and student_name='abc' and book_name='df';
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Some clustering keys are missing: book_id, date_of_issue"
+cqlsh:dak> update Library_Info1 set count=count+1 where student_id=2 and student_name='abc' and book_name='df' and book_id=1 and Date_of_issue="12/03/1986";
+SyntaxException: line 1:144 no viable alternative at input ';' (...and book_id=1 and Date_of_issue=["12/03/198]6";)
+cqlsh:dak> update Library_Info1 set count=count+1 where student_id=2 and student_name='abc' and book_name='df' and book_id=1 and Date_of_issue='12/03/1986';
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Unable to coerce '12/03/1986' to a formatted date (long)"
+cqlsh:dak> update Library_Info1 set count=count+1 where student_id=2 and student_name='abc' and book_name='df' and book_id=1 and Date_of_issue='1986-04-05';
+cqlsh:dak> select * from Library_Info1;
+
+ student_id | student_name | book_name | book_id | date_of_issue                   | count
+------------+--------------+-----------+---------+---------------------------------+-------
+          2 |          abc |        df |       1 | 1986-04-04 18:30:00.000000+0000 |     1
+
+(1 rows)
+cqlsh:dak> select * from Library_Info1 where student_id=2;
+
+ student_id | student_name | book_name | book_id | date_of_issue                   | count
+------------+--------------+-----------+---------+---------------------------------+-------
+          2 |          abc |        df |       1 | 1986-04-04 18:30:00.000000+0000 |     1
+
+(1 rows)
+cqlsh:dak> select * from Library_Info1 where student_id=2 and student_name='abc';
+
+ student_id | student_name | book_name | book_id | date_of_issue                   | count
+------------+--------------+-----------+---------+---------------------------------+-------
+          2 |          abc |        df |       1 | 1986-04-04 18:30:00.000000+0000 |     1
+
+(1 rows)
+cqlsh:dak> select * from Library_Info1 where student_id=2 and book_name='df';
+InvalidRequest: Error from server: code=2200 [Invalid query] message="PRIMARY KEY column "book_name" cannot be restricted as preceding column "student_name" is not restricted"
+cqlsh:dak> CREATE TABLE Employee_Info (Emp_id int, Emp_Name text,Designation text,Date_Of_Joining timestamp, salary double, Dept_name text,primary key(Emp_id));
+cqlsh:dak> BEGIN BATCH
+       ... INSERT INTO Employee_Info(Emp_id, Emp_Name, Designation, Date_Of_Joining, salary, Dept_name) VALUES (120,'Asha','Manager','2021-04-01',30000.0,'CSE') INSERT INTO Employee_Info(Emp_id, Emp_Name, Designation, Date_Of_Joining, salary, Dept_name) VALUES (121,'Kiran','Emp','2019-04-20',20000.0,'CSE') INSERT INTO Employee_Info(Emp_id, Emp_Name, Designation, Date_Of_Joining, salary, Dept_name) VALUES (122,'Dakshina','Emp','2019-05-13',22000.0,'CSE') INSERT INTO Employee_Info(Emp_id, Emp_Name, Designation, Date_Of_Joining, salary, Dept_name) VALUES (123,'Bharath','Emp','2020-08-01',22500.0,'CSE')
+       ... APPLY BATCH;
+cqlsh:dak> SELECT * FROM employee_info;
+
+ emp_id | date_of_joining                 | dept_name | designation | emp_name | salary
+--------+---------------------------------+-----------+-------------+----------+--------
+    120 | 2021-03-31 18:30:00.000000+0000 |       CSE |     Manager |     Asha |  30000
+    123 | 2020-07-31 18:30:00.000000+0000 |       CSE |         Emp |  Bharath |  22500
+    122 | 2019-05-12 18:30:00.000000+0000 |       CSE |         Emp | Dakshina |  22000
+    121 | 2019-04-19 18:30:00.000000+0000 |       CSE |         Emp |    Kiran |  20000
+
+(4 rows)
+cqlsh:dak> UPDATE Employee_Info SET Projects='Research'WHERE Emp_id=120 and salary=30000.0;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Undefined column name projects"
+cqlsh:dak> UPDATE Employee_Info SET Projects='Research'WHERE Emp_id=120;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Undefined column name projects"
+cqlsh:dak> ALTER TABLE Employee_Info  ADD Projects text;
+cqlsh:dak> UPDATE Employee_Info SET Projects='Research'WHERE Emp_id=120 and salary=30000.0;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Non PRIMARY KEY columns found in where clause: salary "
+cqlsh:dak> UPDATE Employee_Info SET Projects='Research'WHERE Emp_id=120;
+cqlsh:dak> SELECT * FROM employee_info;
+
+ emp_id | date_of_joining                 | dept_name | designation | emp_name | projects | salary
+--------+---------------------------------+-----------+-------------+----------+----------+--------
+    120 | 2021-03-31 18:30:00.000000+0000 |       CSE |     Manager |     Asha | Research |  30000
+    123 | 2020-07-31 18:30:00.000000+0000 |       CSE |         Emp |  Bharath |     null |  22500
+    122 | 2019-05-12 18:30:00.000000+0000 |       CSE |         Emp | Dakshina |     null |  22000
+    121 | 2019-04-19 18:30:00.000000+0000 |       CSE |         Emp |    Kiran |     null |  20000
+
+(4 rows)
+cqlsh:dak> create index on employee_info(salary);
+cqlsh:dak> UPDATE Employee_Info SET Projects='Research'WHERE Emp_id=120 and salary=30000.0;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Non PRIMARY KEY columns found in where clause: salary "
+cqlsh:dak> 
