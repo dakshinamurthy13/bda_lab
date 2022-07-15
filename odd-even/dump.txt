@@ -1,0 +1,131 @@
+hduser@dakshina-VirtualBox:~$ hdfs dfs -cat /square/out1/part-00000
+1	1
+2	4
+3	9
+hduser@dakshina-VirtualBox:~$ hadoop jar odd.jar WOEdriver /dak/abcd.txt /odd/out1
+22/07/15 13:39:29 INFO Configuration.deprecation: session.id is deprecated. Instead, use dfs.metrics.session-id
+22/07/15 13:39:29 INFO jvm.JvmMetrics: Initializing JVM Metrics with processName=JobTracker, sessionId=
+22/07/15 13:39:29 INFO jvm.JvmMetrics: Cannot initialize JVM Metrics with processName=JobTracker, sessionId= - already initialized
+22/07/15 13:39:30 WARN mapreduce.JobSubmitter: Hadoop command-line option parsing not performed. Implement the Tool interface and execute your application with ToolRunner to remedy this.
+22/07/15 13:39:30 INFO mapred.FileInputFormat: Total input paths to process : 1
+22/07/15 13:39:30 INFO mapreduce.JobSubmitter: number of splits:1
+22/07/15 13:39:30 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_local795364361_0001
+22/07/15 13:39:31 INFO mapreduce.Job: The url to track the job: http://localhost:8080/
+22/07/15 13:39:31 INFO mapreduce.Job: Running job: job_local795364361_0001
+22/07/15 13:39:31 INFO mapred.LocalJobRunner: OutputCommitter set in config null
+22/07/15 13:39:31 INFO mapred.LocalJobRunner: OutputCommitter is org.apache.hadoop.mapred.FileOutputCommitter
+22/07/15 13:39:31 INFO mapred.LocalJobRunner: Waiting for map tasks
+22/07/15 13:39:31 INFO mapred.LocalJobRunner: Starting task: attempt_local795364361_0001_m_000000_0
+22/07/15 13:39:32 INFO mapred.Task:  Using ResourceCalculatorProcessTree : [ ]
+22/07/15 13:39:32 INFO mapred.MapTask: Processing split: hdfs://localhost:54310/dak/abcd.txt:0+6
+22/07/15 13:39:32 INFO mapred.MapTask: numReduceTasks: 1
+22/07/15 13:39:32 INFO mapred.MapTask: (EQUATOR) 0 kvi 26214396(104857584)
+22/07/15 13:39:32 INFO mapred.MapTask: mapreduce.task.io.sort.mb: 100
+22/07/15 13:39:32 INFO mapred.MapTask: soft limit at 83886080
+22/07/15 13:39:32 INFO mapred.MapTask: bufstart = 0; bufvoid = 104857600
+22/07/15 13:39:32 INFO mapred.MapTask: kvstart = 26214396; length = 6553600
+22/07/15 13:39:32 INFO mapred.MapTask: Map output collector class = org.apache.hadoop.mapred.MapTask$MapOutputBuffer
+22/07/15 13:39:32 INFO mapred.LocalJobRunner: 
+22/07/15 13:39:32 INFO mapred.MapTask: Starting flush of map output
+22/07/15 13:39:32 INFO mapred.MapTask: Spilling map output
+22/07/15 13:39:32 INFO mapred.MapTask: bufstart = 0; bufend = 25; bufvoid = 104857600
+22/07/15 13:39:32 INFO mapred.MapTask: kvstart = 26214396(104857584); kvend = 26214388(104857552); length = 9/6553600
+22/07/15 13:39:32 INFO mapred.MapTask: Finished spill 0
+22/07/15 13:39:32 INFO mapred.Task: Task:attempt_local795364361_0001_m_000000_0 is done. And is in the process of committing
+22/07/15 13:39:32 INFO mapreduce.Job: Job job_local795364361_0001 running in uber mode : false
+22/07/15 13:39:32 INFO mapreduce.Job:  map 0% reduce 0%
+22/07/15 13:39:32 INFO mapred.LocalJobRunner: hdfs://localhost:54310/dak/abcd.txt:0+6
+22/07/15 13:39:32 INFO mapred.Task: Task 'attempt_local795364361_0001_m_000000_0' done.
+22/07/15 13:39:32 INFO mapred.LocalJobRunner: Finishing task: attempt_local795364361_0001_m_000000_0
+22/07/15 13:39:32 INFO mapred.LocalJobRunner: map task executor complete.
+22/07/15 13:39:32 INFO mapred.LocalJobRunner: Waiting for reduce tasks
+22/07/15 13:39:32 INFO mapred.LocalJobRunner: Starting task: attempt_local795364361_0001_r_000000_0
+22/07/15 13:39:32 INFO mapred.Task:  Using ResourceCalculatorProcessTree : [ ]
+22/07/15 13:39:32 INFO mapred.ReduceTask: Using ShuffleConsumerPlugin: org.apache.hadoop.mapreduce.task.reduce.Shuffle@29d17f73
+22/07/15 13:39:32 INFO reduce.MergeManagerImpl: MergerManager: memoryLimit=334338464, maxSingleShuffleLimit=83584616, mergeThreshold=220663392, ioSortFactor=10, memToMemMergeOutputsThreshold=10
+22/07/15 13:39:32 INFO reduce.EventFetcher: attempt_local795364361_0001_r_000000_0 Thread started: EventFetcher for fetching Map Completion Events
+22/07/15 13:39:32 INFO reduce.LocalFetcher: localfetcher#1 about to shuffle output of map attempt_local795364361_0001_m_000000_0 decomp: 33 len: 37 to MEMORY
+22/07/15 13:39:32 INFO reduce.InMemoryMapOutput: Read 33 bytes from map-output for attempt_local795364361_0001_m_000000_0
+22/07/15 13:39:32 INFO reduce.MergeManagerImpl: closeInMemoryFile -> map-output of size: 33, inMemoryMapOutputs.size() -> 1, commitMemory -> 0, usedMemory ->33
+22/07/15 13:39:32 WARN io.ReadaheadPool: Failed readahead on ifile
+EBADF: Bad file descriptor
+	at org.apache.hadoop.io.nativeio.NativeIO$POSIX.posix_fadvise(Native Method)
+	at org.apache.hadoop.io.nativeio.NativeIO$POSIX.posixFadviseIfPossible(NativeIO.java:267)
+	at org.apache.hadoop.io.nativeio.NativeIO$POSIX$CacheManipulator.posixFadviseIfPossible(NativeIO.java:146)
+	at org.apache.hadoop.io.ReadaheadPool$ReadaheadRequestImpl.run(ReadaheadPool.java:206)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+22/07/15 13:39:32 INFO reduce.EventFetcher: EventFetcher is interrupted.. Returning
+22/07/15 13:39:32 INFO mapred.LocalJobRunner: 1 / 1 copied.
+22/07/15 13:39:32 INFO reduce.MergeManagerImpl: finalMerge called with 1 in-memory map-outputs and 0 on-disk map-outputs
+22/07/15 13:39:33 INFO mapred.Merger: Merging 1 sorted segments
+22/07/15 13:39:33 INFO mapred.Merger: Down to the last merge-pass, with 1 segments left of total size: 26 bytes
+22/07/15 13:39:33 INFO reduce.MergeManagerImpl: Merged 1 segments, 33 bytes to disk to satisfy reduce memory limit
+22/07/15 13:39:33 INFO reduce.MergeManagerImpl: Merging 1 files, 37 bytes from disk
+22/07/15 13:39:33 INFO reduce.MergeManagerImpl: Merging 0 segments, 0 bytes from memory into reduce
+22/07/15 13:39:33 INFO mapred.Merger: Merging 1 sorted segments
+22/07/15 13:39:33 INFO mapred.Merger: Down to the last merge-pass, with 1 segments left of total size: 26 bytes
+22/07/15 13:39:33 INFO mapred.LocalJobRunner: 1 / 1 copied.
+22/07/15 13:39:33 INFO mapred.Task: Task:attempt_local795364361_0001_r_000000_0 is done. And is in the process of committing
+22/07/15 13:39:33 INFO mapred.LocalJobRunner: 1 / 1 copied.
+22/07/15 13:39:33 INFO mapred.Task: Task attempt_local795364361_0001_r_000000_0 is allowed to commit now
+22/07/15 13:39:33 INFO output.FileOutputCommitter: Saved output of task 'attempt_local795364361_0001_r_000000_0' to hdfs://localhost:54310/odd/out1/_temporary/0/task_local795364361_0001_r_000000
+22/07/15 13:39:33 INFO mapred.LocalJobRunner: reduce > reduce
+22/07/15 13:39:33 INFO mapred.Task: Task 'attempt_local795364361_0001_r_000000_0' done.
+22/07/15 13:39:33 INFO mapred.LocalJobRunner: Finishing task: attempt_local795364361_0001_r_000000_0
+22/07/15 13:39:33 INFO mapred.LocalJobRunner: reduce task executor complete.
+22/07/15 13:39:33 INFO mapreduce.Job:  map 100% reduce 100%
+22/07/15 13:39:34 INFO mapreduce.Job: Job job_local795364361_0001 completed successfully
+22/07/15 13:39:34 INFO mapreduce.Job: Counters: 38
+	File System Counters
+		FILE: Number of bytes read=8682
+		FILE: Number of bytes written=507669
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=12
+		HDFS: Number of bytes written=26
+		HDFS: Number of read operations=13
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=4
+	Map-Reduce Framework
+		Map input records=1
+		Map output records=3
+		Map output bytes=25
+		Map output materialized bytes=37
+		Input split bytes=87
+		Combine input records=0
+		Combine output records=0
+		Reduce input groups=2
+		Reduce shuffle bytes=37
+		Reduce input records=3
+		Reduce output records=4
+		Spilled Records=6
+		Shuffled Maps =1
+		Failed Shuffles=0
+		Merged Map outputs=1
+		GC time elapsed (ms)=9
+		CPU time spent (ms)=0
+		Physical memory (bytes) snapshot=0
+		Virtual memory (bytes) snapshot=0
+		Total committed heap usage (bytes)=412090368
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=6
+	File Output Format Counters 
+		Bytes Written=26
+0
+hduser@dakshina-VirtualBox:~$ hdfs dfs -cat /odd/out1/part-00000
+EVEN	0
+EVEN	1
+ODD	0
+ODD	2
+hduser@dakshina-VirtualBox:~$ 
+
